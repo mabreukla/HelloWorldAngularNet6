@@ -12,7 +12,7 @@ namespace HelloWorldAngularNet6.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            using (BloggingContext db = new BloggingContext())
+            using (HelloWorldContext db = new HelloWorldContext())
             {
                 List<string> returnValue = new List<string>() { "Updating the blog and adding a post" };
 

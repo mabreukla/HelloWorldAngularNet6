@@ -12,7 +12,7 @@ namespace HelloWorldAngularNet6.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            using (var db = new BloggingContext())
+            using (var db = new HelloWorldContext())
             {
                 List<string> returnValue = new List<string>() { "Inserting a new blog" };
                 db.Add(new Blog { Url = String.Format("http://blogs.msdn.com/adonet/{0:mm-dd-yyyy}", DateTime.Now) });

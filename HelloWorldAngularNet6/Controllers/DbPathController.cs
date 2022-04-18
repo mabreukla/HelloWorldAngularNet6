@@ -11,7 +11,7 @@ namespace HelloWorldAngularNet6.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            using (var db = new BloggingContext())
+            using (var db = new HelloWorldContext())
             {
                 string returnValue = String.Format("Database path: {0}.", db.DbPath);
 

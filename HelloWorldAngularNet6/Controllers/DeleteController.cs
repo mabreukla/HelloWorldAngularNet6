@@ -14,7 +14,7 @@ namespace HelloWorldAngularNet6.Controllers
         {
             List<string> returnValue = new List<string>() { "Deleting the first blog"};
 
-            using (BloggingContext db = new BloggingContext())
+            using (HelloWorldContext db = new HelloWorldContext())
             {
                 Blog blog = new Blog();
                 blog = db.Blogs.OrderBy(b => b.BlogId).FirstOrDefault();

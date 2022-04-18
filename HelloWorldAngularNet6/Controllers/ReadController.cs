@@ -15,7 +15,7 @@ namespace HelloWorldAngularNet6.Controllers
             List<string> returnValue = new List<string>() { "Querying for a blog" };
             List<Blog> blogs = new List<Blog>();
 
-            using (var db = new BloggingContext())
+            using (var db = new HelloWorldContext())
             {
                 blogs = db.Blogs
                     .OrderBy(b => b.BlogId)
