@@ -63,5 +63,56 @@ namespace HelloWorldAngularNet6.Controllers
 
             return Ok(returnValue);
         }
+
+        [HttpPost]
+        [Route("")]
+        public ActionResult<Hero> Add(Hero hero)
+        {
+            if (hero == null)
+            {
+                return BadRequest("Hero is null");
+            }
+
+            if (hero.Id != null && hero.Id != 0)
+            {
+                return BadRequest("Hero id must be 0, not filled in, or null");
+            }
+
+            _db.Heroes.Add(hero);
+            _db.SaveChanges();
+
+            Hero returnValue = new Hero();
+            Hero addedHero = _db.Heroes.Where<Hero>(x => x.Id == hero.Id).FirstOrDefault();
+            if (addedHero != null)
+            {
+                returnValue = new Hero();
+            }
+            else
+            {
+                BadRequest("Hero was not added successfully");
+            }
+
+            return Ok("Hero was successfully added");
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public ActionResult<Hero> Delete(int id)
+        {
+            Hero heroToDelete = new Hero();
+            Hero foundHero = _db.Heroes.Where<Hero>(x => x.Id == id).FirstOrDefault();
+            if (foundHero != null && foundHero.Id == id)
+            {
+                heroToDelete = foundHero;
+                _db.Remove(foundHero);
+                _db.SaveChanges();
+
+                return Ok(String.Format("Hero {0}, with id {1}, has been deleted", foundHero.Name, foundHero.Id));
+            }
+            else
+            {
+                return BadRequest("Hero not found");
+            }
+        }
     }
 }
