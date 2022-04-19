@@ -13,9 +13,9 @@ namespace HelloWorldAngularNet6.Migrations
                 name: "Blogs",
                 columns: table => new
                 {
-                    BlogId = table.Column<int>(type: "INTEGER", nullable: false)
+                    BlogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Url = table.Column<string>(type: "TEXT", nullable: false)
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -23,14 +23,27 @@ namespace HelloWorldAngularNet6.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Heroes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Heroes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WeatherForecasts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TemperatureC = table.Column<int>(type: "INTEGER", nullable: false),
-                    Summary = table.Column<string>(type: "TEXT", nullable: true)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TemperatureC = table.Column<int>(type: "int", nullable: false),
+                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,11 +54,11 @@ namespace HelloWorldAngularNet6.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    PostId = table.Column<int>(type: "INTEGER", nullable: false)
+                    PostId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", nullable: false),
-                    BlogId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BlogId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,6 +79,9 @@ namespace HelloWorldAngularNet6.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Heroes");
+
             migrationBuilder.DropTable(
                 name: "Posts");
 
