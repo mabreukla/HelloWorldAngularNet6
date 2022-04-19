@@ -14,7 +14,7 @@ namespace HelloWorldAngularNet6.Migrations
                 columns: table => new
                 {
                     BlogId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Url = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -27,7 +27,7 @@ namespace HelloWorldAngularNet6.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TemperatureC = table.Column<int>(type: "INTEGER", nullable: false),
                     Summary = table.Column<string>(type: "TEXT", nullable: true)
@@ -42,7 +42,7 @@ namespace HelloWorldAngularNet6.Migrations
                 columns: table => new
                 {
                     PostId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     BlogId = table.Column<int>(type: "INTEGER", nullable: false)
