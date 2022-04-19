@@ -1,7 +1,16 @@
+using HelloWorldAngularNet6.Classes;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add Contexts
+builder.Services.AddDbContext<HelloWorldContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("crudAppDb"));
+});
 
 var app = builder.Build();
 

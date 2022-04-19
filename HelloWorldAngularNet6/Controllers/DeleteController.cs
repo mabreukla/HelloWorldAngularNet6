@@ -9,29 +9,35 @@ namespace HelloWorldAngularNet6.Controllers
     [ApiController]
     public class DeleteController : ControllerBase
     {
+        // Fields
+        private HelloWorldContext _db;
+
+        // Ctor
+        public DeleteController(HelloWorldContext db)
+        {
+            _db = db;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
             List<string> returnValue = new List<string>() { "Deleting the first blog"};
 
-            using (HelloWorldContext db = new HelloWorldContext())
+            Blog blog = new Blog();
+            blog = _db.Blogs.OrderBy(b => b.BlogId).FirstOrDefault();
+
+            if (blog != null)
             {
-                Blog blog = new Blog();
-                blog = db.Blogs.OrderBy(b => b.BlogId).FirstOrDefault();
-
-                if (blog != null)
-                {
-                    db.Remove(blog);
-                    db.SaveChanges();
-                    returnValue.Add("Successfully removed the first blog.");
-                }
-                else
-                {
-                    returnValue.Add("Unable to remove the first blog.");
-                }
-
-                return Ok(returnValue);
+                _db.Remove(blog);
+                _db.SaveChanges();
+                returnValue.Add("Successfully removed the first blog.");
             }
+            else
+            {
+                returnValue.Add("Unable to remove the first blog.");
+            }
+
+            return Ok(returnValue);
         }
     }
 }
