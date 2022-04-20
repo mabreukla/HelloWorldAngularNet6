@@ -12,16 +12,6 @@ builder.Services.AddDbContext<HelloWorldContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("crudAppDb"));
 });
 
-// Cors
-builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders",
-    builder =>
-    {
-        builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    })
-);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,13 +19,11 @@ if (!app.Environment.IsDevelopment())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseCors("AllowAllHeaders");
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",

@@ -31,7 +31,7 @@ export class HeroService {
 
   // Methods
   getHeroes(): Observable<Hero[]> {
-    const heroes: Observable<Hero[]> = this.http.get<Hero[]>(this.heroesUrl)
+    const heroes: Observable<Hero[]> = this.http.get<Hero[]>(this.heroesUrl, this.httpOptions)
       .pipe(
         tap(_ => this.log('fetchedHeroes')),
         catchError(this.handleError<Hero[]>('getHeroes', []))
@@ -44,7 +44,7 @@ export class HeroService {
     const url = `${ this.heroesUrl }/${ id }`;
     // Why does this work when getting just one?
     // The in memory api is smart enough to route the calls correctly (including put)
-    let hero: Observable<Hero> = this.http.get<Hero>(url).pipe(
+    let hero: Observable<Hero> = this.http.get<Hero>(url, this.httpOptions).pipe(
       tap(_ => this.log(`fetched hero id=${ id }`)),
       catchError(this.handleError<Hero>(`getHero id=${ id }`))
     );
@@ -59,7 +59,7 @@ export class HeroService {
 
   /** PUT: update the hero on the server */
   updateHero(hero: Hero): Observable<any> {
-    let returnValue: Observable<any> = this.http.put(this.heroesUrl, hero).pipe(
+    let returnValue: Observable<any> = this.http.put(this.heroesUrl, hero, this.httpOptions).pipe(
       tap(_ => this.log(`updated hero id=${hero.id}`)),
       catchError(this.handleError<any>('updateHero'))
     );

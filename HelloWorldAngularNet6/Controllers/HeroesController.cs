@@ -55,7 +55,6 @@ namespace HelloWorldAngularNet6.Controllers
 
         [HttpPut]
         [Route("")]
-        [EnableCors("AllowAllHeaders")]
         public ActionResult<Hero> Update(Hero hero)
         {
             if (_db.Database.CanConnect() == false)
@@ -102,14 +101,14 @@ namespace HelloWorldAngularNet6.Controllers
             Hero addedHero = _db.Heroes.Where<Hero>(x => x.Id == hero.Id).FirstOrDefault();
             if (addedHero != null)
             {
-                returnValue = new Hero();
+                returnValue = addedHero;
             }
             else
             {
                 BadRequest("Hero was not added successfully");
             }
 
-            return Ok("Hero was successfully added");
+            return Ok(returnValue);
         }
 
         [HttpDelete]
@@ -121,15 +120,15 @@ namespace HelloWorldAngularNet6.Controllers
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Hero heroToDelete = new Hero();
             Hero foundHero = _db.Heroes.Where<Hero>(x => x.Id == id).FirstOrDefault();
             if (foundHero != null && foundHero.Id == id)
             {
-                heroToDelete = foundHero;
+                Hero deletedHero = new Hero();
+                deletedHero = foundHero;
                 _db.Remove(foundHero);
                 _db.SaveChanges();
 
-                return Ok(String.Format("Hero {0}, with id {1}, has been deleted", foundHero.Name, foundHero.Id));
+                return Ok(deletedHero);
             }
             else
             {
