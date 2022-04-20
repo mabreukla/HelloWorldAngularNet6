@@ -1,5 +1,6 @@
 ﻿using HelloWorldAngularNet6.Classes;
 using HelloWorldAngularNet6.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,12 +22,12 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("")]
         public ActionResult<Hero[]> GetAll()
         {
+            if (_db.Database.CanConnect() == false)
+            {
+                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+            }
+
             List<Hero> returnValue = new List<Hero>();
-
-            // Manual
-            //returnValue = _db.Set<Hero>().ToList<Hero>();
-
-            // Auto
             returnValue = _db.Heroes.ToList<Hero>();
 
             return Ok(returnValue);
@@ -36,6 +37,11 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("{id}")]
         public ActionResult<Hero> GetById(int id)
         {
+            if (_db.Database.CanConnect() == false)
+            {
+                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+            }
+
             Hero returnValue = new Hero();
 
             Hero foundHero = _db.Heroes.Where(x => x.Id == id).FirstOrDefault();
@@ -49,8 +55,14 @@ namespace HelloWorldAngularNet6.Controllers
 
         [HttpPut]
         [Route("")]
+        [EnableCors("AllowAllHeaders")]
         public ActionResult<Hero> Update(Hero hero)
         {
+            if (_db.Database.CanConnect() == false)
+            {
+                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+            }
+
             _db.Heroes.Update(hero);
             _db.SaveChanges();
 
@@ -68,6 +80,11 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("")]
         public ActionResult<Hero> Add(Hero hero)
         {
+            if (_db.Database.CanConnect() == false)
+            {
+                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+            }
+
             if (hero == null)
             {
                 return BadRequest("Hero is null");
@@ -99,6 +116,11 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("{id}")]
         public ActionResult<Hero> Delete(int id)
         {
+            if (_db.Database.CanConnect() == false)
+            {
+                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+            }
+
             Hero heroToDelete = new Hero();
             Hero foundHero = _db.Heroes.Where<Hero>(x => x.Id == id).FirstOrDefault();
             if (foundHero != null && foundHero.Id == id)

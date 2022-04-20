@@ -13,9 +13,14 @@ export class HeroService {
   // Fields
   private messageService: MessageService;
   private http: HttpClient;
+  //private heroesUrl = 'api/heroes';
   private heroesUrl = 'api/heroes';
   private httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ 'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin' : '*',
+    'Access-Control-Allow-Methods' : 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers' : 'Origin, Content-Type, X-Auth-Token'
+    })
   };
 
   // Ctor
@@ -54,7 +59,7 @@ export class HeroService {
 
   /** PUT: update the hero on the server */
   updateHero(hero: Hero): Observable<any> {
-    let returnValue: Observable<any> = this.http.put(this.heroesUrl, hero, this.httpOptions).pipe(
+    let returnValue: Observable<any> = this.http.put(this.heroesUrl, hero).pipe(
       tap(_ => this.log(`updated hero id=${hero.id}`)),
       catchError(this.handleError<any>('updateHero'))
     );
