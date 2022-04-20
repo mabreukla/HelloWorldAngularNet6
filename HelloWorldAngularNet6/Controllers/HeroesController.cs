@@ -1,5 +1,6 @@
 ﻿using HelloWorldAngularNet6.Classes;
 using HelloWorldAngularNet6.Models;
+using HelloWorldAngularNet6.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,14 @@ namespace HelloWorldAngularNet6.Controllers
     [ApiController]
     public class HeroesController : ControllerBase
     {
+        // Fields
         HelloWorldContext _db;
+        IHeroesService _heroesService;
 
-        public HeroesController(HelloWorldContext helloWorldContext)
+        public HeroesController(HelloWorldContext helloWorldContext, IHeroesService heroesService)
         {
             _db = helloWorldContext;
+            _heroesService = heroesService;
         }
 
 
@@ -28,7 +32,7 @@ namespace HelloWorldAngularNet6.Controllers
             }
 
             List<Hero> returnValue = new List<Hero>();
-            returnValue = _db.Heroes.ToList<Hero>();
+            returnValue = _heroesService.GetAllHeroes();
 
             return Ok(returnValue);
         }
@@ -42,9 +46,8 @@ namespace HelloWorldAngularNet6.Controllers
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
+            Hero foundHero = _heroesService.GetHero(id);
             Hero returnValue = new Hero();
-
-            Hero foundHero = _db.Heroes.Where(x => x.Id == id).FirstOrDefault();
             if (foundHero != null)
             {
                 returnValue = foundHero;
@@ -62,11 +65,8 @@ namespace HelloWorldAngularNet6.Controllers
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            _db.Heroes.Update(hero);
-            _db.SaveChanges();
-
+            Hero addedHero = _heroesService.UpdateHero(hero);
             Hero returnValue = new Hero();
-            Hero addedHero = _db.Heroes.Where<Hero>(x => x.Id == hero.Id).FirstOrDefault();
             if (addedHero != null)
             {
                 returnValue = addedHero;
@@ -94,21 +94,20 @@ namespace HelloWorldAngularNet6.Controllers
                 return BadRequest("Hero id must be 0, not filled in, or null");
             }
 
-            _db.Heroes.Add(hero);
-            _db.SaveChanges();
+            Hero addedHero = _heroesService.AddHero(hero);
 
+            // Checking to make sure the Id was updated after the hero was added to the db
             Hero returnValue = new Hero();
-            Hero addedHero = _db.Heroes.Where<Hero>(x => x.Id == hero.Id).FirstOrDefault();
-            if (addedHero != null)
+            if (addedHero.Id != 0)
             {
                 returnValue = addedHero;
+
+                return Ok(returnValue);
             }
             else
             {
-                BadRequest("Hero was not added successfully");
+                return StatusCode(500, returnValue);
             }
-
-            return Ok(returnValue);
         }
 
         [HttpDelete]
@@ -123,12 +122,18 @@ namespace HelloWorldAngularNet6.Controllers
             Hero foundHero = _db.Heroes.Where<Hero>(x => x.Id == id).FirstOrDefault();
             if (foundHero != null && foundHero.Id == id)
             {
-                Hero deletedHero = new Hero();
-                deletedHero = foundHero;
-                _db.Remove(foundHero);
-                _db.SaveChanges();
+                Hero heroToDelete = foundHero;
+                _heroesService.DeleteHero(heroToDelete);
 
-                return Ok(deletedHero);
+                Hero heroNotFound = _heroesService.GetHero(heroToDelete.Id);
+                if(heroNotFound == null)
+                {
+                    return Ok(heroNotFound);
+                }
+                else
+                {
+                    return StatusCode(500, heroNotFound);
+                }    
             }
             else
             {

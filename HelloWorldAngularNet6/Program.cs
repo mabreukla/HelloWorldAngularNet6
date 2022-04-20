@@ -1,10 +1,16 @@
 using HelloWorldAngularNet6.Classes;
+using HelloWorldAngularNet6.Repositories;
+using HelloWorldAngularNet6.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IHeroesService, HeroesService>();
+
+// Add repositories to the container
+builder.Services.AddScoped<IHeroesRepository, HeroesRepository>();
 
 // Add Contexts
 builder.Services.AddDbContext<HelloWorldContext>(options =>
