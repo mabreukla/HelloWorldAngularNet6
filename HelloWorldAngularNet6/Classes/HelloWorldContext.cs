@@ -5,11 +5,12 @@ namespace HelloWorldAngularNet6.Classes
 {
     public class HelloWorldContext : DbContext
     {
-        // Angular tutorial object
+        // Tables
         public DbSet<Hero> Heroes { get; set; }
 
         public HelloWorldContext(DbContextOptions<HelloWorldContext> options) : base(options)
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
     }
 }

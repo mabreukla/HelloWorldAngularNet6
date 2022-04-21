@@ -81,13 +81,20 @@ namespace HelloWorldAngularNet6.Controllers
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Task<Hero> addHero = _heroesService.UpdateHeroAsync(hero);
-            Hero addedHero = await addHero;
+            Task<Hero> findHero = _heroesService.GetHeroAsync(hero.Id);
+            Hero foundHero = await findHero;
+            if (foundHero == null || foundHero.Id != hero.Id)
+            {
+                return BadRequest("Hero not found");
+            }
+
+            Task<Hero> updateHero = _heroesService.UpdateHeroAsync(hero);
+            Hero updatedHero = await updateHero;
 
             Hero returnValue = new Hero();
-            if (addedHero != null)
+            if (updatedHero != null)
             {
-                returnValue = addedHero;
+                returnValue = updatedHero;
             }
 
             return Ok(returnValue);

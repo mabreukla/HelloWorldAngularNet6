@@ -1,5 +1,6 @@
 ﻿using HelloWorldAngularNet6.Classes;
 using HelloWorldAngularNet6.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HelloWorldAngularNet6.Repositories
 {
@@ -25,8 +26,8 @@ namespace HelloWorldAngularNet6.Repositories
         public async Task<Hero> AddAsync(Hero hero)
         {
             Hero heroToAdd = hero;
-            _db.Heroes.Add(heroToAdd);
-            _db.SaveChanges();
+            await _db.Heroes.AddAsync(heroToAdd);
+            await _db.SaveChangesAsync();
 
             return heroToAdd;
         }
@@ -49,7 +50,7 @@ namespace HelloWorldAngularNet6.Repositories
         public async Task DeleteAsync(Hero hero)
         {
             _db.Remove(hero);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// <returns>List of hero objects</returns>
         public async Task<List<Hero>> GetAllAsync()
         {
-            List<Hero> heroes = _db.Heroes.ToList<Hero>();
+            List<Hero> heroes = await _db.Heroes.ToListAsync();
 
             return heroes;
         }
@@ -70,7 +71,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// <returns>Hero object, returns null the hero was not found</returns>
         public async Task<Hero> GetByIdAsync(int id)
         {
-            Hero hero = _db.Heroes.FirstOrDefault(h => h.Id == id);
+            Hero? hero = await _db.Heroes.FirstOrDefaultAsync(h => h.Id == id);
 
             return hero;
         }
@@ -83,7 +84,7 @@ namespace HelloWorldAngularNet6.Repositories
         public async Task<Hero> UpdateAsync(Hero hero)
         {
             _db.Heroes.Update(hero);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return hero;
         }
