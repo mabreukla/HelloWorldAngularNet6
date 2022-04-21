@@ -22,22 +22,24 @@ namespace HelloWorldAngularNet6.Services
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>Returns the added hero</returns>
-        public Hero AddHero(Hero hero)
+        public async Task<Hero> AddHeroAsync(Hero hero)
         {
-            Hero heroToBeAdded = hero;
-            Hero AddedHero = _heroesRepository.Add(heroToBeAdded);
+            Task<Hero> addHero = _heroesRepository.AddAsync(hero);
+            Hero AddedHero = await addHero;
 
             return AddedHero;
         }
 
         /// <summary>
         /// Deletes a hero from the repo
+        /// The hero must exist
         /// </summary>
         /// <param name="hero"></param>
-        public void DeleteHero(Hero hero)
+        public async Task DeleteHeroAsync(Hero hero)
         {
-            Hero heroToBeDeleted = hero;
-            _heroesRepository.Delete(heroToBeDeleted);
+            Task deleteHero = _heroesRepository.DeleteAsync(hero);
+
+            await deleteHero;
         }
 
         /// <summary>
@@ -45,9 +47,10 @@ namespace HelloWorldAngularNet6.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Returns a found hero. If the hero was not found then the returned object from the repo will be null</returns>
-        public Hero GetHero(int id)
+        public async Task<Hero> GetHeroAsync(int id)
         {
-            Hero foundHero = _heroesRepository.GetById(id);
+            Task<Hero> getHeroById = _heroesRepository.GetByIdAsync(id);
+            Hero foundHero = await getHeroById;
 
             return foundHero;
         }
@@ -56,9 +59,9 @@ namespace HelloWorldAngularNet6.Services
         /// Gets all the heroes
         /// </summary>
         /// <returns>Returns aa list of all the heroes as a Hero</returns>
-        public List<Hero> GetAllHeroes()
+        public async Task<List<Hero>> GetAllHeroesAsync()
         {
-            List<Hero> heroes = _heroesRepository.GetAll();
+            List<Hero> heroes = await _heroesRepository.GetAllAsync();
 
             return heroes;
         }
@@ -68,10 +71,10 @@ namespace HelloWorldAngularNet6.Services
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>Returns the updated hero</returns>
-        public Hero UpdateHero(Hero hero)
+        public async Task<Hero> UpdateHeroAsync(Hero hero)
         {
-            Hero heroToUpdate = hero;
-            Hero updatedHero = _heroesRepository.Update(heroToUpdate);
+            Task<Hero> updateHero = _heroesRepository.UpdateAsync(hero);
+            Hero updatedHero = await updateHero;
 
             return updatedHero;
         }

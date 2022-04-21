@@ -22,7 +22,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>The added hero with the updated id number</returns>
-        public Hero Add(Hero hero)
+        public async Task<Hero> AddAsync(Hero hero)
         {
             Hero heroToAdd = hero;
             _db.Heroes.Add(heroToAdd);
@@ -46,7 +46,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// Deletes a hero
         /// </summary>
         /// <param name="hero"></param>
-        public void Delete(Hero hero)
+        public async Task DeleteAsync(Hero hero)
         {
             _db.Remove(hero);
             _db.SaveChanges();
@@ -56,7 +56,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// Gets all the heroes
         /// </summary>
         /// <returns>List of hero objects</returns>
-        public List<Hero> GetAll()
+        public async Task<List<Hero>> GetAllAsync()
         {
             List<Hero> heroes = _db.Heroes.ToList<Hero>();
 
@@ -68,7 +68,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Hero object, returns null the hero was not found</returns>
-        public Hero GetById(int id)
+        public async Task<Hero> GetByIdAsync(int id)
         {
             Hero hero = _db.Heroes.FirstOrDefault(h => h.Id == id);
 
@@ -80,7 +80,7 @@ namespace HelloWorldAngularNet6.Repositories
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>The updated hero object</returns>
-        public Hero Update(Hero hero)
+        public async Task<Hero> UpdateAsync(Hero hero)
         {
             _db.Heroes.Update(hero);
             _db.SaveChanges();

@@ -8,34 +8,34 @@ namespace HelloWorldAngularNet6.Repositories
         /// Gets all the heroes
         /// </summary>
         /// <returns>List of hero objects</returns>
-        public List<Hero> GetAll();
+        public Task<List<Hero>> GetAllAsync();
 
         /// <summary>
         /// Gets a hero based off the hero's id
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Hero object</returns>
-        public Hero GetById(int id);
+        public Task<Hero> GetByIdAsync(int id);
 
         /// <summary>
         /// Adds a hero to the db
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>The added hero with the updated id number</returns>
-        public Hero Add(Hero hero);
+        public Task<Hero> AddAsync(Hero hero);
 
         /// <summary>
         /// Updates a hero's data
         /// </summary>
         /// <param name="hero"></param>
         /// <returns>The updated hero object</returns>
-        public Hero Update(Hero hero);
+        public Task<Hero> UpdateAsync(Hero hero);
 
         /// <summary>
         /// Deletes a hero
         /// </summary>
         /// <param name="hero"></param>
-        public void Delete(Hero hero);
+        public Task DeleteAsync(Hero hero);
 
         /// <summary>
         /// Checks to see if we can connect to the DB

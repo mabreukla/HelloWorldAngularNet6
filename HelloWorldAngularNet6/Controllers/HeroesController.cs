@@ -30,14 +30,14 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns all the heroes as a JSON array</returns>
         [HttpGet]
         [Route("")]
-        public ActionResult<Hero[]> GetAll()
+        public async Task<ActionResult<Hero[]>> GetAllAsync()
         {
             if (_heroesService.CanConnectToDb() == false)
             {
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            List<Hero> allHeroes = _heroesService.GetAllHeroes();
+            List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
 
             return Ok(allHeroes);
         }
@@ -49,15 +49,17 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns the hero as a JSON</returns>
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Hero> GetById(int id)
+        public async Task<ActionResult<Hero>> GetByIdAsync(int id)
         {
             if (_heroesService.CanConnectToDb() == false)
             {
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Hero foundHero = _heroesService.GetHero(id);
-            if (foundHero != null)
+            Task<Hero> getHeroById = _heroesService.GetHeroAsync(id);
+            Hero foundHero = await getHeroById;
+
+            if (foundHero == null)
             {
                 return StatusCode(500, foundHero);
             }
@@ -72,14 +74,16 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns the updated hero as a JSON</returns>
         [HttpPut]
         [Route("")]
-        public ActionResult<Hero> Update(Hero hero)
+        public async Task<ActionResult<Hero>> UpdateAsync(Hero hero)
         {
             if (_heroesService.CanConnectToDb() == false)
             {
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Hero addedHero = _heroesService.UpdateHero(hero);
+            Task<Hero> addHero = _heroesService.UpdateHeroAsync(hero);
+            Hero addedHero = await addHero;
+
             Hero returnValue = new Hero();
             if (addedHero != null)
             {
@@ -96,7 +100,7 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns the hero, with the new id, as a JSON</returns>
         [HttpPost]
         [Route("")]
-        public ActionResult<Hero> Add(Hero hero)
+        public async Task<ActionResult<Hero>> AddAsync(Hero hero)
         {
             if (_heroesService.CanConnectToDb() == false)
             {
@@ -113,7 +117,8 @@ namespace HelloWorldAngularNet6.Controllers
                 return BadRequest("Hero id must be 0, not filled in, or null");
             }
 
-            Hero addedHero = _heroesService.AddHero(hero);
+            Task<Hero> addHero = _heroesService.AddHeroAsync(hero);
+            Hero addedHero = await addHero;
 
             // Checking to make sure the Id was updated after the hero was added to the db
             Hero returnValue = new Hero();
@@ -139,20 +144,22 @@ namespace HelloWorldAngularNet6.Controllers
         /// </returns>
         [HttpDelete]
         [Route("{id}")]
-        public ActionResult<Hero> Delete(int id)
+        public async Task<ActionResult<Hero>> Delete(int id)
         {
             if (_heroesService.CanConnectToDb() == false)
             {
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Hero foundHero = _db.Heroes.Where<Hero>(x => x.Id == id).FirstOrDefault();
+            Task<Hero> findHero = _heroesService.GetHeroAsync(id);
+            Hero foundHero = await findHero;
             if (foundHero != null && foundHero.Id == id)
             {
-                Hero heroToDelete = foundHero;
-                _heroesService.DeleteHero(heroToDelete);
+                Task deleteHero = _heroesService.DeleteHeroAsync(foundHero);
+                await deleteHero;
 
-                Hero heroNotFound = _heroesService.GetHero(heroToDelete.Id);
+                Task<Hero> confirmHeroWasDeleted = _heroesService.GetHeroAsync(foundHero.Id);
+                Hero heroNotFound = await confirmHeroWasDeleted;
                 if(heroNotFound == null)
                 {
                     return Ok(heroNotFound);
