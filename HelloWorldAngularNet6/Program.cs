@@ -8,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHeroesService, HeroesService>();
+builder.Services.AddScoped<IUniversesService, UniversesService>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IHeroesRepository, HeroesRepository>();
+builder.Services.AddScoped<IUniversesRepository, UniversesRepository>();
 
 // Add Contexts
 builder.Services.AddDbContext<HelloWorldContext>(options =>

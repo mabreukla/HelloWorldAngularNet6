@@ -12,7 +12,6 @@ namespace HelloWorldAngularNet6.Controllers
     public class HeroesController : ControllerBase
     {
         // Fields
-        HelloWorldContext _db;
         IHeroesService _heroesService;
         IMapper _mapper;
 
@@ -23,7 +22,6 @@ namespace HelloWorldAngularNet6.Controllers
         /// <param name="heroesService"></param>
         public HeroesController(HelloWorldContext helloWorldContext, IHeroesService heroesService, IMapper mapper)
         {
-            _db = helloWorldContext;
             _heroesService = heroesService;
             _mapper = mapper;
         }
