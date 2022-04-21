@@ -13,6 +13,7 @@ namespace HelloWorldAngularNet6.Controllers
     {
         // Fields
         IHeroesService _heroesService;
+        IUniversesService _universesService;
         IMapper _mapper;
 
         /// <summary>
@@ -20,10 +21,11 @@ namespace HelloWorldAngularNet6.Controllers
         /// </summary>
         /// <param name="helloWorldContext"></param>
         /// <param name="heroesService"></param>
-        public HeroesController(HelloWorldContext helloWorldContext, IHeroesService heroesService, IMapper mapper)
+        public HeroesController(IMapper mapper, IHeroesService heroesService, IUniversesService universesService)
         {
-            _heroesService = heroesService;
             _mapper = mapper;
+            _heroesService = heroesService;
+            _universesService = universesService;
         }
 
         /// <summary>
@@ -64,10 +66,19 @@ namespace HelloWorldAngularNet6.Controllers
 
             if (foundHero == null)
             {
-                return StatusCode(500);
+                return StatusCode(500, "The hero does not exist");
+            }
+
+            Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe);
+            Universe foundUniverse = await getUniverse;
+
+            if (foundUniverse == null)
+            {
+                return StatusCode(500, "The hero's universe does not exist");
             }
 
             HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
+            heroDto = _mapper.Map<Universe, HeroReadDto>(foundUniverse, heroDto);
 
             return Ok(heroDto);
         }

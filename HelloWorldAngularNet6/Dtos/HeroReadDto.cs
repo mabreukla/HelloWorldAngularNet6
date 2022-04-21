@@ -14,5 +14,10 @@
         /// Hero's name
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The name of the universe the hero belongs to
+        /// </summary>
+        public string Universe { get; set; }
     }
 }
