@@ -18,6 +18,9 @@ builder.Services.AddDbContext<HelloWorldContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("crudAppDb"));
 });
 
+// Add the auto mapper to allow Dtos
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

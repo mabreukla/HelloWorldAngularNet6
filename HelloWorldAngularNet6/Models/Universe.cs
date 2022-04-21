@@ -1,18 +1,15 @@
 ﻿namespace HelloWorldAngularNet6.Models
 {
-    public class Hero
+    public class Universe
     {
         /// <summary>
-        /// Hero's ID in the DB
+        /// Primary Key ID
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Hero's name
+        /// Name of the universe
         /// </summary>
         public string Name { get; set; }
-
-        // Universe
-        public int Universe { get; set; }
     }
 }

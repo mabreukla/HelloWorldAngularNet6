@@ -1,9 +1,12 @@
-﻿namespace HelloWorldAngularNet6.Models
+﻿namespace HelloWorldAngularNet6.Dtos
 {
-    public class Hero
+    /// <summary>
+    /// The ready-to-be-consumed format of a Hero
+    /// </summary>
+    public class HeroReadDto
     {
         /// <summary>
-        /// Hero's ID in the DB
+        /// Hero's id in the db
         /// </summary>
         public int Id { get; set; }
 
@@ -11,8 +14,5 @@
         /// Hero's name
         /// </summary>
         public string Name { get; set; }
-
-        // Universe
-        public int Universe { get; set; }
     }
 }

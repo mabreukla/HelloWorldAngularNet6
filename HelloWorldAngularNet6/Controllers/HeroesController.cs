@@ -1,4 +1,6 @@
-﻿using HelloWorldAngularNet6.Classes;
+﻿using AutoMapper;
+using HelloWorldAngularNet6.Classes;
+using HelloWorldAngularNet6.Dtos;
 using HelloWorldAngularNet6.Models;
 using HelloWorldAngularNet6.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +14,18 @@ namespace HelloWorldAngularNet6.Controllers
         // Fields
         HelloWorldContext _db;
         IHeroesService _heroesService;
+        IMapper _mapper;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="helloWorldContext"></param>
         /// <param name="heroesService"></param>
-        public HeroesController(HelloWorldContext helloWorldContext, IHeroesService heroesService)
+        public HeroesController(HelloWorldContext helloWorldContext, IHeroesService heroesService, IMapper mapper)
         {
             _db = helloWorldContext;
             _heroesService = heroesService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns all the heroes as a JSON array</returns>
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<Hero[]>> GetAllAsync()
+        public async Task<ActionResult<HeroReadDto[]>> GetAllAsync()
         {
             if (_heroesService.CanConnectToDb() == false)
             {
@@ -38,8 +42,9 @@ namespace HelloWorldAngularNet6.Controllers
             }
 
             List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
+            List<HeroReadDto> heroesDto = _mapper.Map<List<HeroReadDto>>(allHeroes);
 
-            return Ok(allHeroes);
+            return Ok(heroesDto);
         }
 
         /// <summary>
@@ -61,10 +66,12 @@ namespace HelloWorldAngularNet6.Controllers
 
             if (foundHero == null)
             {
-                return StatusCode(500, foundHero);
+                return StatusCode(500);
             }
 
-            return Ok(foundHero);
+            HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
+
+            return Ok(heroDto);
         }
 
         /// <summary>
