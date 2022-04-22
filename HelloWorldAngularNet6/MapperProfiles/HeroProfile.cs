@@ -9,13 +9,11 @@ namespace HelloWorldAngularNet6.MapperProfiles
         public HeroProfile()
         {
             // Source -> Target
-            CreateMap<Hero, HeroReadDto>()
-                .ForMember(d => d.Universe, opt => opt.Ignore());
+            CreateMap<Hero, HeroReadDto>();
             CreateMap<Universe, HeroReadDto>()
                 .ForMember(h => h.Universe, u => u.MapFrom(n => n.Name))
                 .ForMember(h => h.Name, opt => opt.Ignore())
                 .ForMember(h => h.Id, opt => opt.Ignore());
-            CreateMap<HeroReadDto, Hero>();
         }
     }
 }

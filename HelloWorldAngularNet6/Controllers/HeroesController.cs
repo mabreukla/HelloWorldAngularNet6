@@ -42,9 +42,16 @@ namespace HelloWorldAngularNet6.Controllers
             }
 
             List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
-            List<HeroReadDto> heroesDto = _mapper.Map<List<HeroReadDto>>(allHeroes);
+            List<HeroReadDto> heroesReadDto = _mapper.Map<List<Hero>, List<HeroReadDto>>(allHeroes);
 
-            return Ok(heroesDto);
+            List<Universe> allUniverses = await _universesService.GetAllUniversesAsync();
+            foreach (HeroReadDto heroReadDto in heroesReadDto)
+            {
+                // Hacky way of doing it but sure. It should be in it's own view or a sql query that does this.
+                heroReadDto.Universe = allUniverses.Where(u => u.Id == Convert.ToInt32(heroReadDto.Universe)).FirstOrDefault().Name;
+            }
+
+            return Ok(heroesReadDto);
         }
 
         /// <summary>
