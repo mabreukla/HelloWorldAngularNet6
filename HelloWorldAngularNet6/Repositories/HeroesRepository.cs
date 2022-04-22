@@ -59,7 +59,9 @@ namespace HelloWorldAngularNet6.Repositories
         /// <returns>List of hero objects</returns>
         public async Task<List<Hero>> GetAllAsync()
         {
-            List<Hero> heroes = await _db.Heroes.ToListAsync();
+            List<Hero> heroes = await _db.Heroes
+                .Include(h => h.Universe)
+                .ToListAsync();
 
             return heroes;
         }
@@ -71,7 +73,9 @@ namespace HelloWorldAngularNet6.Repositories
         /// <returns>Hero object, returns null the hero was not found</returns>
         public async Task<Hero> GetByIdAsync(int id)
         {
-            Hero? hero = await _db.Heroes.FirstOrDefaultAsync(h => h.Id == id);
+            Hero? hero = await _db.Heroes
+                .Include(h => h.Universe)
+                .FirstOrDefaultAsync(h => h.Id == id);
 
             return hero;
         }

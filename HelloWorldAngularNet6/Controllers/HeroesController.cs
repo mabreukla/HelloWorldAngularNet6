@@ -44,13 +44,6 @@ namespace HelloWorldAngularNet6.Controllers
             List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
             List<HeroReadDto> heroesReadDto = _mapper.Map<List<Hero>, List<HeroReadDto>>(allHeroes);
 
-            List<Universe> allUniverses = await _universesService.GetAllUniversesAsync();
-            foreach (HeroReadDto heroReadDto in heroesReadDto)
-            {
-                // Hacky way of doing it but sure. It should be in it's own view or a sql query that does this.
-                heroReadDto.Universe = allUniverses.Where(u => u.Id == Convert.ToInt32(heroReadDto.Universe)).FirstOrDefault().Name;
-            }
-
             return Ok(heroesReadDto);
         }
 
@@ -76,7 +69,7 @@ namespace HelloWorldAngularNet6.Controllers
                 return StatusCode(500, "The hero does not exist");
             }
 
-            Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe);
+            Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe.Id);
             Universe foundUniverse = await getUniverse;
 
             if (foundUniverse == null)
@@ -118,7 +111,7 @@ namespace HelloWorldAngularNet6.Controllers
             }
 
             Hero heroToUpdate = _mapper.Map<Hero>(heroCreateDto);
-            heroToUpdate.Universe = foundUniverse.Id;
+            heroToUpdate.UniverseId = foundUniverse.Id;
 
             Task<Hero> updateHero = _heroesService.UpdateHeroAsync(heroToUpdate);
             Hero updatedHero = await updateHero;

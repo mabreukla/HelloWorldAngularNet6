@@ -12,7 +12,14 @@
         /// </summary>
         public string Name { get; set; }
 
-        // Universe
-        public int Universe { get; set; }
+        /// <summary>
+        /// The id of the universe
+        /// </summary>
+        public int UniverseId { get; set; }
+
+        /// <summary>
+        /// The universe the hero originated from
+        /// </summary>
+        public Universe Universe { get; set; }
     }
 }
