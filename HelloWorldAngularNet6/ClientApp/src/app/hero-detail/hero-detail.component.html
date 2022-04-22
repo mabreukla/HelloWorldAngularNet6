@@ -11,10 +11,15 @@
     </label>
     <input id="hero-name" [(ngModel)]="hero.name" placeholder="name">
   </div>
-  <div>
-    <label for="hero-universe">
-      Universe: {{ hero.universe }}
+  <div class="form-group">
+    <label for="universes">
+      Universe:
     </label>
+    <select id="universes" class="form-control" [(ngModel)]="hero.universe">
+      <option *ngFor="let universe of universes" [value]="universe.name">
+        {{ universe.name }}
+      </option>
+    </select>
   </div>
   <button type="button" (click)="goBack()">
     Go Back
