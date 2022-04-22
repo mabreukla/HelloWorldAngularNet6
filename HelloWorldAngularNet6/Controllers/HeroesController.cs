@@ -36,15 +36,23 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("")]
         public async Task<ActionResult<HeroReadDto[]>> GetAllAsync()
         {
-            if (_heroesService.CanConnectToDb() == false)
+            try
             {
-                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                if (_heroesService.CanConnectToDb() == false)
+                {
+                    return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                }
+
+                List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
+                List<HeroReadDto> heroesReadDto = _mapper.Map<List<Hero>, List<HeroReadDto>>(allHeroes);
+
+                return Ok(heroesReadDto);
             }
-
-            List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
-            List<HeroReadDto> heroesReadDto = _mapper.Map<List<Hero>, List<HeroReadDto>>(allHeroes);
-
-            return Ok(heroesReadDto);
+            catch (Exception ex)
+            {
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
+            }
         }
 
         /// <summary>
@@ -56,31 +64,39 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("{id}")]
         public async Task<ActionResult<Hero>> GetByIdAsync(int id)
         {
-            if (_heroesService.CanConnectToDb() == false)
+            try
             {
-                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                if (_heroesService.CanConnectToDb() == false)
+                {
+                    return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                }
+
+                Task<Hero> getHeroById = _heroesService.GetHeroAsync(id);
+                Hero foundHero = await getHeroById;
+
+                if (foundHero == null)
+                {
+                    return StatusCode(500, "The hero does not exist");
+                }
+
+                Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe.Id);
+                Universe foundUniverse = await getUniverse;
+
+                if (foundUniverse == null)
+                {
+                    return StatusCode(500, "The hero's universe does not exist");
+                }
+
+                HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
+                heroDto = _mapper.Map<Universe, HeroReadDto>(foundUniverse, heroDto);
+
+                return Ok(heroDto);
             }
-
-            Task<Hero> getHeroById = _heroesService.GetHeroAsync(id);
-            Hero foundHero = await getHeroById;
-
-            if (foundHero == null)
+            catch (Exception ex)
             {
-                return StatusCode(500, "The hero does not exist");
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
             }
-
-            Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe.Id);
-            Universe foundUniverse = await getUniverse;
-
-            if (foundUniverse == null)
-            {
-                return StatusCode(500, "The hero's universe does not exist");
-            }
-
-            HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
-            heroDto = _mapper.Map<Universe, HeroReadDto>(foundUniverse, heroDto);
-
-            return Ok(heroDto);
         }
 
         /// <summary>
@@ -92,77 +108,102 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("")]
         public async Task<ActionResult<Hero>> UpdateAsync(HeroCreateDto heroCreateDto)
         {
-            if (_heroesService.CanConnectToDb() == false)
+            try
             {
-                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
-            }
+                if (_heroesService.CanConnectToDb() == false)
+                {
+                    return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                }
 
-            Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
-            if (foundUniverse == null)
+                Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
+                if (foundUniverse == null)
+                {
+                    return BadRequest("The chosen universe does not exist.");
+                }
+
+                Task<Hero> findHero = _heroesService.GetHeroAsync(heroCreateDto.Id);
+                Hero foundHero = await findHero;
+                if (foundHero == null || foundHero.Id != heroCreateDto.Id)
+                {
+                    return BadRequest("Hero not found");
+                }
+
+                Hero heroToUpdate = _mapper.Map<Hero>(heroCreateDto);
+                heroToUpdate.UniverseId = foundUniverse.Id;
+
+                Task<Hero> updateHero = _heroesService.UpdateHeroAsync(heroToUpdate);
+                Hero updatedHero = await updateHero;
+
+                Hero returnValue = new Hero();
+                if (updatedHero != null)
+                {
+                    returnValue = updatedHero;
+                }
+
+                return Ok(returnValue);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("The chosen universe does not exist.");
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
             }
-
-            Task<Hero> findHero = _heroesService.GetHeroAsync(heroCreateDto.Id);
-            Hero foundHero = await findHero;
-            if (foundHero == null || foundHero.Id != heroCreateDto.Id)
-            {
-                return BadRequest("Hero not found");
-            }
-
-            Hero heroToUpdate = _mapper.Map<Hero>(heroCreateDto);
-            heroToUpdate.UniverseId = foundUniverse.Id;
-
-            Task<Hero> updateHero = _heroesService.UpdateHeroAsync(heroToUpdate);
-            Hero updatedHero = await updateHero;
-
-            Hero returnValue = new Hero();
-            if (updatedHero != null)
-            {
-                returnValue = updatedHero;
-            }
-
-            return Ok(returnValue);
         }
 
         /// <summary>
         /// Adds a hero to the database. The Hero's ID Must be 0
         /// </summary>
-        /// <param name="hero"></param>
+        /// <param name="heroCreateDto"></param>
         /// <returns>Returns the hero, with the new id, as a JSON</returns>
         [HttpPost]
         [Route("")]
-        public async Task<ActionResult<Hero>> AddAsync(Hero hero)
+        public async Task<ActionResult<HeroReadDto>> AddAsync(HeroCreateDto heroCreateDto)
         {
-            if (_heroesService.CanConnectToDb() == false)
+            try
             {
-                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                if (_heroesService.CanConnectToDb() == false)
+                {
+                    return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                }
+
+                if (heroCreateDto == null)
+                {
+                    return BadRequest("Hero is null");
+                }
+
+                if (heroCreateDto.Id != null && heroCreateDto.Id != 0)
+                {
+                    return BadRequest("Hero id must be 0, not filled in, or null");
+                }
+
+                Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
+                if (foundUniverse == null)
+                {
+                    return BadRequest("The chosen universe does not exist.");
+                }
+
+                Hero hero = _mapper.Map<Hero>(heroCreateDto);
+                hero.UniverseId = foundUniverse.Id;
+
+                Task<Hero> addHero = _heroesService.AddHeroAsync(hero);
+                Hero addedHero = await addHero;
+
+                // Checking to make sure the Id was updated after the hero was added to the db
+                HeroReadDto returnValue = new HeroReadDto();
+                if (addedHero.Id != 0)
+                {
+                    returnValue = _mapper.Map<HeroReadDto>(addedHero);
+
+                    return Ok(returnValue);
+                }
+                else
+                {
+                    return StatusCode(500, returnValue);
+                }
             }
-
-            if (hero == null)
+            catch (Exception ex)
             {
-                return BadRequest("Hero is null");
-            }
-
-            if (hero.Id != null && hero.Id != 0)
-            {
-                return BadRequest("Hero id must be 0, not filled in, or null");
-            }
-
-            Task<Hero> addHero = _heroesService.AddHeroAsync(hero);
-            Hero addedHero = await addHero;
-
-            // Checking to make sure the Id was updated after the hero was added to the db
-            Hero returnValue = new Hero();
-            if (addedHero.Id != 0)
-            {
-                returnValue = addedHero;
-
-                return Ok(returnValue);
-            }
-            else
-            {
-                return StatusCode(500, returnValue);
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -178,32 +219,40 @@ namespace HelloWorldAngularNet6.Controllers
         [Route("{id}")]
         public async Task<ActionResult<Hero>> Delete(int id)
         {
-            if (_heroesService.CanConnectToDb() == false)
+            try
             {
-                return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
-            }
-
-            Task<Hero> findHero = _heroesService.GetHeroAsync(id);
-            Hero foundHero = await findHero;
-            if (foundHero != null && foundHero.Id == id)
-            {
-                Task deleteHero = _heroesService.DeleteHeroAsync(foundHero);
-                await deleteHero;
-
-                Task<Hero> confirmHeroWasDeleted = _heroesService.GetHeroAsync(foundHero.Id);
-                Hero heroNotFound = await confirmHeroWasDeleted;
-                if(heroNotFound == null)
+                if (_heroesService.CanConnectToDb() == false)
                 {
-                    return Ok(heroNotFound);
+                    return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
+                }
+
+                Task<Hero> findHero = _heroesService.GetHeroAsync(id);
+                Hero foundHero = await findHero;
+                if (foundHero != null && foundHero.Id == id)
+                {
+                    Task deleteHero = _heroesService.DeleteHeroAsync(foundHero);
+                    await deleteHero;
+
+                    Task<Hero> confirmHeroWasDeleted = _heroesService.GetHeroAsync(foundHero.Id);
+                    Hero heroNotFound = await confirmHeroWasDeleted;
+                    if (heroNotFound == null)
+                    {
+                        return Ok(heroNotFound);
+                    }
+                    else
+                    {
+                        return StatusCode(500, heroNotFound);
+                    }
                 }
                 else
                 {
-                    return StatusCode(500, heroNotFound);
-                }    
+                    return BadRequest("Hero not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Hero not found");
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
             }
         }
     }
