@@ -6,7 +6,16 @@
     Hero name: 
   </label>
   <input id="new-hero" #heroName />
-
+  <div class="form-group">
+    <label for="universes">
+      Universe:
+    </label>
+    <select id="universes" class="form-control" [(ngModel)]="selectedUniverse">
+      <option *ngFor="let universe of universes" [value]="universe.name">
+        {{ universe.name }}
+      </option>
+    </select>
+  </div>
   <!-- (click) passes input value to add() and then clears the input -->
   <button type="button" class="add-button" (click)="add(heroName.value); heroName.value=''">
     Add hero

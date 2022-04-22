@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Hero } from '../hero';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 import { UniverseService } from '../universe.service';
 import { Universe } from '../universe';
@@ -19,7 +19,6 @@ export class HeroDetailComponent implements OnInit {
   private heroService: HeroService;
   private location: Location;
   private universeService: UniverseService;
-  @Input() universe?: Universe;
   @Input() universes?: Universe[];
 
   // Ctor

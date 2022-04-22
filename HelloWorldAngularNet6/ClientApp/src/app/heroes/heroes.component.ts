@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
+import { Universe } from '../universe';
+import { UniverseService } from '../universe.service';
 
 @Component({
   selector: 'app-heroes',
@@ -12,15 +14,24 @@ export class HeroesComponent implements OnInit {
   // Fields
   public heroes: Hero[] = [];
   private heroService: HeroService;
+  private universeService: UniverseService;
+  @Input() universes?: Universe[];
+  @Input() selectedUniverse: string;
   
   // Ctor
-  constructor(heroService: HeroService) {
+  constructor(heroService: HeroService, universeService: UniverseService) {
     this.heroService = heroService;
+    this.universeService = universeService;
+    this.selectedUniverse = "None";
   }
 
   // Methods
   getHeroes(): void {
     this.heroService.getHeroes().subscribe(heroes => this.heroes = heroes);
+  }
+
+  getUniverses(): void {
+    this.universeService.getUniverses().subscribe(universes => this.universes = universes);
   }
 
   add(name: string): void {
@@ -29,7 +40,7 @@ export class HeroesComponent implements OnInit {
       return;
     }
 
-    let universe = "None";
+    let universe = this.selectedUniverse;
 
     this.heroService.addHero({ name, universe } as Hero)
       .subscribe(hero => {
@@ -45,5 +56,6 @@ export class HeroesComponent implements OnInit {
   // Lifecycle
   ngOnInit(): void {
     this.getHeroes();
+    this.getUniverses();
   }
 }
