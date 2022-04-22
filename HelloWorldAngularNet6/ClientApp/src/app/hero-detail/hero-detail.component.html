@@ -11,6 +11,11 @@
     </label>
     <input id="hero-name" [(ngModel)]="hero.name" placeholder="name">
   </div>
+  <div>
+    <label for="hero-universe">
+      Universe: {{ hero.universe }}
+    </label>
+  </div>
   <button type="button" (click)="goBack()">
     Go Back
   </button>
