@@ -6,7 +6,7 @@ namespace HelloWorldAngularNet6.Services
     public class UniversesService : IUniversesService
     {
         // Fields
-        IUniversesRepository _universesRepository;
+        private IUniversesRepository _universesRepository;
 
         public UniversesService(IUniversesRepository universesRepository)
         {
@@ -33,6 +33,19 @@ namespace HelloWorldAngularNet6.Services
         public async Task<Universe> GetUniverseByIdAsync(int id)
         {
             Task<Universe> getUniverse = _universesRepository.GetByIdAsync(id);
+            Universe universe = await getUniverse;
+
+            return universe;
+        }
+
+        /// <summary>
+        /// Returns a Universe by name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Returns a task with a universe return object. Return null if the object is not found.</returns>
+        public async Task<Universe> GetUniverseByNameAsync(string name)
+        {
+            Task<Universe> getUniverse = _universesRepository.GetByNameAsync(name);
             Universe universe = await getUniverse;
 
             return universe;

@@ -93,25 +93,34 @@ namespace HelloWorldAngularNet6.Controllers
         /// <summary>
         /// Updates a hero
         /// </summary>
-        /// <param name="hero"></param>
+        /// <param name="heroCreateDto"></param>
         /// <returns>Returns the updated hero as a JSON</returns>
         [HttpPut]
         [Route("")]
-        public async Task<ActionResult<Hero>> UpdateAsync(Hero hero)
+        public async Task<ActionResult<Hero>> UpdateAsync(HeroCreateDto heroCreateDto)
         {
             if (_heroesService.CanConnectToDb() == false)
             {
                 return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
             }
 
-            Task<Hero> findHero = _heroesService.GetHeroAsync(hero.Id);
+            Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
+            if (foundUniverse == null)
+            {
+                return BadRequest("The chosen universe does not exist.");
+            }
+
+            Task<Hero> findHero = _heroesService.GetHeroAsync(heroCreateDto.Id);
             Hero foundHero = await findHero;
-            if (foundHero == null || foundHero.Id != hero.Id)
+            if (foundHero == null || foundHero.Id != heroCreateDto.Id)
             {
                 return BadRequest("Hero not found");
             }
 
-            Task<Hero> updateHero = _heroesService.UpdateHeroAsync(hero);
+            Hero heroToUpdate = _mapper.Map<Hero>(heroCreateDto);
+            heroToUpdate.Universe = foundUniverse.Id;
+
+            Task<Hero> updateHero = _heroesService.UpdateHeroAsync(heroToUpdate);
             Hero updatedHero = await updateHero;
 
             Hero returnValue = new Hero();

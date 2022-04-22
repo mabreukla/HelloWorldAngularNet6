@@ -7,7 +7,7 @@ namespace HelloWorldAngularNet6.Repositories
     public class UniversesRepository : IUniversesRepository
     {
         // Fields
-        HelloWorldContext _db;
+        private HelloWorldContext _db;
 
         public UniversesRepository(HelloWorldContext db)
         {
@@ -33,6 +33,18 @@ namespace HelloWorldAngularNet6.Repositories
         public async Task<Universe> GetByIdAsync(int id)
         {
             Universe? universe = await _db.Universes.FirstOrDefaultAsync(x => x.Id == id);
+
+            return universe;
+        }
+
+        /// <summary>
+        /// Returns a Universe by name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Returns a task with a universe return object. Return null if the object is not found.</returns>
+        public async Task<Universe> GetByNameAsync(string name)
+        {
+            Universe? universe = await _db.Universes.FirstOrDefaultAsync(x => x.Name == name);
 
             return universe;
         }
