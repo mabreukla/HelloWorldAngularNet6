@@ -6,12 +6,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 
 // Components
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { MessagesComponent } from './messages/messages.component';
-import { HeroDetailComponent } from './hero-detail/hero-detail.component';
-import { HeroesComponent } from './heroes/heroes.component';
+import { DashboardComponent } from './Components/dashboard/dashboard.component';
+import { MessagesComponent } from './Components/messages/messages.component';
+import { HeroDetailComponent } from './Components/hero-detail/hero-detail.component';
+import { HeroesComponent } from './Components/heroes/heroes.component';
 import { AppComponent } from './app.component';
-import { HeroSearchComponent } from './hero-search/hero-search.component';
+import { HeroSearchComponent } from './Components/hero-search/hero-search.component';
 
 @NgModule({
   declarations: [
