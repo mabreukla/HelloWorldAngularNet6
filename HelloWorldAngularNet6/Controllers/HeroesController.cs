@@ -62,7 +62,7 @@ namespace HelloWorldAngularNet6.Controllers
         /// <returns>Returns the hero as a JSON</returns>
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<Hero>> GetByIdAsync(int id)
+        public async Task<ActionResult<HeroReadDto>> GetByIdAsync(int id)
         {
             try
             {
@@ -83,6 +83,34 @@ namespace HelloWorldAngularNet6.Controllers
                 return Ok(heroDto);
             }
             catch (Exception ex)
+            {
+                // Ex message should be logged and never make it to prod
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of heroes that contain the name parameter
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>
+        /// List of hero objects
+        /// Returns an empty list if none are found.                 
+        /// </returns>
+        [HttpGet]
+        [Route("Search")]
+        public async Task<ActionResult<HeroReadDto[]>> GetHeroesByName(string name)
+        {
+            try
+            {
+                Task<List<Hero>> getHeroesByName = _heroesService.GetHeroesByNameAsync(name);
+                List<Hero> foundHeroes = await getHeroesByName;
+
+                List<HeroReadDto> heroesDto = _mapper.Map<List<HeroReadDto>>(foundHeroes);
+
+                return Ok(heroesDto);
+            }
+            catch(Exception ex)
             {
                 // Ex message should be logged and never make it to prod
                 return StatusCode(500, ex.Message);

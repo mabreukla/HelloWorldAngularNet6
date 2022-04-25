@@ -81,6 +81,21 @@ namespace HelloWorldAngularNet6.Repositories
         }
 
         /// <summary>
+        /// Gets aa list of heroes that match the name parameter
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>List of hero objects</returns>
+        public async Task<List<Hero>> GetHeroesByNameAsync(string name)
+        {
+            List<Hero> heroes = await _db.Heroes
+                .Include(h => h.Universe)
+                .Where(h => h.Name.Contains(name))
+                .ToListAsync();
+
+            return heroes;
+        }
+
+        /// <summary>
         /// Updates a hero's data
         /// </summary>
         /// <param name="hero"></param>

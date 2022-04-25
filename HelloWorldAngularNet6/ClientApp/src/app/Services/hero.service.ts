@@ -121,7 +121,7 @@ export class HeroService {
       // if not search term, return empty hero array.
       returnValue = of([]);
     } else {
-      returnValue = this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      returnValue = this.http.get<Hero[]>(`${this.heroesUrl}/search?name=${term}`).pipe(
         tap(x => x.length ?
           this.log(`found heroes matching "${term}"`) :
           this.log(`no heroes matching "${term}"`)),

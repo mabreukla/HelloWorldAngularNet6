@@ -89,5 +89,18 @@ namespace HelloWorldAngularNet6.Services
 
             return canConnectToServer;
         }
+
+        /// <summary>
+        /// Gets a list of heroes whose name contains the name parameter
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Returns a list of hero objects</returns>
+        public async Task<List<Hero>> GetHeroesByNameAsync(string name)
+        {
+            Task<List<Hero>> getHeroesByName = _heroesRepository.GetHeroesByNameAsync(name);
+            List<Hero> foundHeroesByName = await getHeroesByName;
+
+            return foundHeroesByName;
+        }
     }
 }

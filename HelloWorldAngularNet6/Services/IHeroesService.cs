@@ -42,5 +42,12 @@ namespace HelloWorldAngularNet6.Services
         /// </summary>
         /// <returns>Returns true if the repo is usable, false otherwise</returns>
         public bool CanConnectToDb();
+
+        /// <summary>
+        /// Get's a colection of heroes by name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public Task<List<Hero>> GetHeroesByNameAsync(string name);
     }
 }
