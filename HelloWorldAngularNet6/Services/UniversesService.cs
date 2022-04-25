@@ -8,6 +8,10 @@ namespace HelloWorldAngularNet6.Services
         // Fields
         private IUniversesRepository _universesRepository;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="universesRepository"></param>
         public UniversesService(IUniversesRepository universesRepository)
         {
             _universesRepository = universesRepository;
@@ -20,9 +24,9 @@ namespace HelloWorldAngularNet6.Services
         public async Task<List<Universe>> GetAllUniversesAsync()
         {
             Task<List<Universe>> getUniverses = _universesRepository.GetAllAsync();
-            List<Universe> universes = await getUniverses;
+            List<Universe> allUniverses = await getUniverses;
 
-            return universes;
+            return allUniverses;
         }
 
         /// <summary>
@@ -33,9 +37,9 @@ namespace HelloWorldAngularNet6.Services
         public async Task<Universe> GetUniverseByIdAsync(int id)
         {
             Task<Universe> getUniverse = _universesRepository.GetByIdAsync(id);
-            Universe universe = await getUniverse;
+            Universe foundUniverse = await getUniverse;
 
-            return universe;
+            return foundUniverse;
         }
 
         /// <summary>
@@ -46,9 +50,9 @@ namespace HelloWorldAngularNet6.Services
         public async Task<Universe> GetUniverseByNameAsync(string name)
         {
             Task<Universe> getUniverse = _universesRepository.GetByNameAsync(name);
-            Universe universe = await getUniverse;
+            Universe foundUniverse = await getUniverse;
 
-            return universe;
+            return foundUniverse;
         }
     }
 }

@@ -61,9 +61,9 @@ namespace HelloWorldAngularNet6.Services
         /// <returns>Returns aa list of all the heroes as a Hero</returns>
         public async Task<List<Hero>> GetAllHeroesAsync()
         {
-            List<Hero> heroes = await _heroesRepository.GetAllAsync();
+            List<Hero> allHeroes = await _heroesRepository.GetAllAsync();
 
-            return heroes;
+            return allHeroes;
         }
 
         /// <summary>

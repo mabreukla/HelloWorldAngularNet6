@@ -9,7 +9,7 @@ namespace HelloWorldAngularNet6.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HeroesController : ControllerBase
+    public class HeroesControllerCommented : ControllerBase
     {
         // Fields
         IHeroesService _heroesService;
@@ -21,7 +21,7 @@ namespace HelloWorldAngularNet6.Controllers
         /// </summary>
         /// <param name="helloWorldContext"></param>
         /// <param name="heroesService"></param>
-        public HeroesController(IMapper mapper, IHeroesService heroesService, IUniversesService universesService)
+        public HeroesControllerCommented(IMapper mapper, IHeroesService heroesService, IUniversesService universesService)
         {
             _mapper = mapper;
             _heroesService = heroesService;
@@ -38,11 +38,13 @@ namespace HelloWorldAngularNet6.Controllers
         {
             try
             {
+                /// Validation
                 if (_heroesService.CanConnectToDb() == false)
                 {
                     return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
                 }
 
+                // Getting all the heroes
                 List<Hero> allHeroes = await _heroesService.GetAllHeroesAsync();
                 List<HeroReadDto> heroesReadDto = _mapper.Map<List<Hero>, List<HeroReadDto>>(allHeroes);
 
@@ -66,11 +68,13 @@ namespace HelloWorldAngularNet6.Controllers
         {
             try
             {
+                // Validation
                 if (_heroesService.CanConnectToDb() == false)
                 {
                     return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
                 }
 
+                // Find the hero
                 Task<Hero> getHeroById = _heroesService.GetHeroAsync(id);
                 Hero foundHero = await getHeroById;
                 if (foundHero == null)
@@ -78,6 +82,7 @@ namespace HelloWorldAngularNet6.Controllers
                     return BadRequest("The hero does not exist");
                 }
 
+                // Returning the hero
                 HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
 
                 return Ok(heroDto);
@@ -100,6 +105,7 @@ namespace HelloWorldAngularNet6.Controllers
         {
             try
             {
+                // Validation
                 if (_heroesService.CanConnectToDb() == false)
                 {
                     return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
@@ -112,19 +118,20 @@ namespace HelloWorldAngularNet6.Controllers
                     return BadRequest("Hero not found");
                 }
 
-                Task<Universe> findUniverse = _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
-                Universe foundUniverse = await findUniverse;
+                Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
                 if (foundUniverse == null)
                 {
                     return BadRequest("The chosen universe does not exist.");
                 }
 
+                // Update the hero
                 Hero heroToUpdate = _mapper.Map<Hero>(heroCreateDto);
                 heroToUpdate.UniverseId = foundUniverse.Id;
 
                 Task<Hero> updateHero = _heroesService.UpdateHeroAsync(heroToUpdate);
                 Hero updatedHero = await updateHero;
 
+                // Returning the hero if the hero was updated successfully
                 Hero returnValue = new Hero();
                 if (updatedHero != null)
                 {
@@ -151,6 +158,7 @@ namespace HelloWorldAngularNet6.Controllers
         {
             try
             {
+                /// Validation
                 if (_heroesService.CanConnectToDb() == false)
                 {
                     return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
@@ -166,13 +174,13 @@ namespace HelloWorldAngularNet6.Controllers
                     return BadRequest("Hero id must be 0, not filled in, or null");
                 }
 
-                Task<Universe> findUniverse = _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
-                Universe foundUniverse = await findUniverse;
+                Universe foundUniverse = await _universesService.GetUniverseByNameAsync(heroCreateDto.Universe);
                 if (foundUniverse == null)
                 {
                     return BadRequest("The chosen universe does not exist.");
                 }
 
+                // Adding a hero
                 Hero hero = _mapper.Map<Hero>(heroCreateDto);
                 hero.UniverseId = foundUniverse.Id;
 
@@ -213,6 +221,7 @@ namespace HelloWorldAngularNet6.Controllers
         {
             try
             {
+                // Validation
                 if (_heroesService.CanConnectToDb() == false)
                 {
                     return StatusCode(500, "Unable to make a connection to the heroes database. Please check that the heroes database is running.");
@@ -225,6 +234,7 @@ namespace HelloWorldAngularNet6.Controllers
                     return BadRequest("Hero not found");
                 }
 
+                // Deleting the hero
                 Task deleteHero = _heroesService.DeleteHeroAsync(foundHero);
                 await deleteHero;
 
