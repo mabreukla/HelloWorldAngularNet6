@@ -79,16 +79,7 @@ namespace HelloWorldAngularNet6.Controllers
                     return StatusCode(500, "The hero does not exist");
                 }
 
-                Task<Universe> getUniverse = _universesService.GetUniverseByIdAsync(foundHero.Universe.Id);
-                Universe foundUniverse = await getUniverse;
-
-                if (foundUniverse == null)
-                {
-                    return StatusCode(500, "The hero's universe does not exist");
-                }
-
                 HeroReadDto heroDto = _mapper.Map<HeroReadDto>(foundHero);
-                heroDto = _mapper.Map<Universe, HeroReadDto>(foundUniverse, heroDto);
 
                 return Ok(heroDto);
             }
